@@ -7,7 +7,7 @@ lvcreate -l 24000 gstr1-vg -n gluster2
 mkfs.ext4 /dev/gstr1-vg/gluster2
 mkdir -p /data/glusterfs2
 mount /dev/gstr1-vg/gluster2 /data/glusterfs2
-echo "/dev/gstr1-vg/gluster2 /data/glusterfs2 ext3 defaults 0 0 " | tee --append /etc/fstab
+echo "/dev/gstr1-vg/gluster2 /data/glusterfs2 ext4 defaults 0 0 " | tee --append /etc/fstab
 
 # Install setup
 apt-get install apt-transport-https
