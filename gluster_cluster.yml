@@ -2,13 +2,13 @@
 
 - name: set up each node of the gluster
   hosts: gluster
-  tasks:
   vars:
-      size: 24000
-      lvm: gstr1-vg
-      gfsname: gfs
-      mntdir: /data/glusterfs2
-            
+    size: 24000
+    lvm: gstr1-vg
+    gfsname: gfs
+    mntdir: /data/glusterfs2
+  tasks:
+  
   - name: upgrade all packages
     apt:
       name: '*'
@@ -105,8 +105,14 @@
       executable: /bin/bash       
 
   - name: ufw enable
-    shell: ufw enable
+    shell: yes | ufw enable
     args:
       executable: /bin/bash       
+
+  - name: start glusterfs
+    shell: systemctl enable glusterd && systemctl start glusterd
+    args:
+      executable: /bin/bash       
+
 
 ...
