@@ -3,7 +3,12 @@
 - name: set up each node of the gluster
   hosts: gluster
   tasks:
-
+  vars:
+      size: 24000
+      lvm: gstr1-vg
+      gfsname: gfs
+      mntdir: /data/glusterfs2
+            
   - name: upgrade all packages
     apt:
       name: '*'
@@ -25,22 +30,22 @@
       state: latest
 
   - name: set up disk
-    shell: lvcreate -l { size } { lvm } -n { gfsname }
+    shell: lvcreate -l {{ size }} {{ lvm }} -n {{ gfsname }}
     args:
       executable: /bin/bash
 
   - name: set up disk
-    shell: mkdir -p { mntdir }
+    shell: mkdir -p {{ mntdir }}
     args:
       executable: /bin/bash
 
   - name: mount 
-    shell: mount { lvm }/{ gfsname } { mntdir }
+    shell: mount {{ lvm }}/{{ gfsname }} {{ mntdir }}
     args:
       executable: /bin/bash
 
   - name: fstab 
-    shell: echo "{ lvm }/{ gfsname } { mntdir } ext4 defaults 0 0 " | tee --append /etc/fstab
+    shell: echo "{{ lvm }}/{{ gfsname }} {{ mntdir }} ext4 defaults 0 0 " | tee --append /etc/fstab
     args:
       executable: /bin/bash
      
@@ -103,6 +108,5 @@
     shell: ufw enable
     args:
       executable: /bin/bash       
-
 
 ...
