@@ -1,0 +1,108 @@
+---
+
+- name: set up each node of the gluster
+  hosts: gluster
+  tasks:
+
+  - name: upgrade all packages
+    apt:
+      name: '*'
+      state: latest
+
+  - name: install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: latest
+
+  - name: install aptitude
+    apt:
+      name: aptitude
+      state: latest
+
+  - name: install glusterfs-server
+    apt:
+      name: glusterfs-server
+      state: latest
+
+  - name: set up disk
+    shell: lvcreate -l { size } { lvm } -n { gfsname }
+    args:
+      executable: /bin/bash
+
+  - name: set up disk
+    shell: mkdir -p { mntdir }
+    args:
+      executable: /bin/bash
+
+  - name: mount 
+    shell: mount { lvm }/{ gfsname } { mntdir }
+    args:
+      executable: /bin/bash
+
+  - name: fstab 
+    shell: echo "{ lvm }/{ gfsname } { mntdir } ext4 defaults 0 0 " | tee --append /etc/fstab
+    args:
+      executable: /bin/bash
+     
+  - name: install ufw
+    apt:
+      name: ufw
+      state: latest
+
+  - name: ufw ssh
+    shell: ufw allow 22/tcp
+    args:
+      executable: /bin/bash
+      
+  - name: ufw rpc
+    shell: ufw allow 111
+    args:
+      executable: /bin/bash      
+ 
+  - name: ufw 24007/tcp
+    shell: ufw allow 24007/tcp
+    args:
+      executable: /bin/bash 
+      
+  - name: ufw 24008/tcp
+    shell: ufw allow 24008/tcp
+    args:
+      executable: /bin/bash       
+      
+  - name: ufw 24009/tcp
+    shell: ufw allow 24009/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw 49152/tcp
+    shell: ufw allow 49152/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw 49153/tcp
+    shell: ufw allow 49153/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw 38465/tcp
+    shell: ufw allow 38465/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw 38466/tcp
+    shell: ufw allow 38466/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw 38467/tcp
+    shell: ufw allow 38467/tcp
+    args:
+      executable: /bin/bash       
+
+  - name: ufw enable
+    shell: ufw enable
+    args:
+      executable: /bin/bash       
+
+
+...
