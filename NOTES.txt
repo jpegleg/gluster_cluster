@@ -1,0 +1,37 @@
+###############################################################
+# ensure disks are LVM with unallocated space before starting #
+###############################################################
+
+# Initial disk setup
+lvcreate -l 24000 gstr1-vg -n gluster2
+mkfs.ext4 /dev/gstr1-vg/gluster2
+mkdir -p /data/glusterfs2
+mount /dev/gstr1-vg/gluster2 /data/glusterfs2
+echo "/dev/gstr1-vg/gluster2 /data/glusterfs2 ext3 defaults 0 0 " | tee --append /etc/fstab
+
+# Install setup
+apt-get install apt-transport-https
+apt-get install aptitude
+aptitude update
+aptitude upgrade
+
+# Install glusterfs server (primary)
+aptitude install glusterfs-server
+systemctl enable glusterd
+systemctl start glusterd
+
+# Install the server and enable glusterd on each other node
+aptitude install glusterfs-server
+systemctl enable glusterd
+systemctl start glusterd
+
+# Peer probe from the primary
+gluster peer probe gluster.server2.local
+gluster peer probe gluster.server3.local
+
+# Create the volume from primary
+gluster volume create gfs replica 3 gluster.server1.local:/data/glusterfs2/gfs gluster.server2.local:/data/glusterfs2/gfs gluster.server3.local:/data/glusterfs2/gfs
+gluster start gfs
+
+# Mount a client to the glusterfs cluster
+mount -t glusterfs gluster.server1.local:/gfsx /mnt/glusterfs/
