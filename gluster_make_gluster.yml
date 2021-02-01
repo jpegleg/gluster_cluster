@@ -1,0 +1,27 @@
+---
+
+- name: setup the glusterfs instance from a primary node
+  hosts: gluster_primary
+  tasks:
+  
+- name: link up the second peer
+  shell: gluster peer probe { secondnode }
+  args:
+    executable: /bin/bash
+
+- name: link up the third peer
+  shell: gluster peer probe { thirdnode }
+  args:
+    executable: /bin/bash
+
+- name: create 
+  shell: gluster volume create gfs replica 3 { primarynode }:{ mntdir }/{ glusterfsname } { secondnode }:{ mntdir }/{ glusterfsname } { thirdnode }:{ mntdir }/{ glusterfsname }
+  args:
+    executable: /bin/bash
+
+- name: start the new glusterfs volume { glusterfsname }
+  shell: gluster start { glusterfsname }
+  args:
+    executable: /bin/bash
+
+...
