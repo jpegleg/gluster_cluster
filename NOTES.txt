@@ -33,5 +33,21 @@ gluster peer probe gluster.server3.local
 gluster volume create gfs replica 3 gluster.server1.local:/data/glusterfs2/gfs gluster.server2.local:/data/glusterfs2/gfs gluster.server3.local:/data/glusterfs2/gfs
 gluster start gfs
 
+
+# Install UFW firewall on each glusterfs server
+aptitude install ufw
+systemctl enable ufw
+ufw allow 22/tcp
+ufw allow 111
+ufw allow 24007/tcp
+ufw allow 24008/tcp
+ufw allow 24009/tcp
+ufw allow 49152/tcp
+ufw allow 49153/tcp
+ufw allow 38465/tcp
+ufw allow 38466/tcp
+ufw allow 38467/tcp
+ufw enable
+
 # Mount a client to the glusterfs cluster
 mount -t glusterfs gluster.server1.local:/gfsx /mnt/glusterfs/
